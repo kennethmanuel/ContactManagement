@@ -1,5 +1,7 @@
 using MudBlazor.Services;
 using ContactManagement.Components;
+using ContactManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,10 @@ builder.Services.AddMudServices();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddDbContext<IntranetHomeContext>(options =>
+    options.UseMySql("Server=192.168.106.225;Port=3306;Database=intranet_home;User Id=root;Password=myroot;", ServerVersion.AutoDetect("Server=192.168.106.225;Port=3306;Database=intranet_home;User Id=root;Password=myroot;")));
+
 
 var app = builder.Build();
 

@@ -6,7 +6,11 @@
 
 <h3>Contact</h3>
 
-@if (contacts != null && contacts.Any())
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (contacts != null && contacts.Any())
 {
     <MudSimpleTable Style="overflow-x: auto;">
         <thead>
@@ -53,17 +57,21 @@ else
     };
 
     private List<ContactManageman> contacts;
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             contacts = await _context.ContactManagemen.ToListAsync();
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(contacts));
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching contacts: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 }

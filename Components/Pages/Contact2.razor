@@ -5,18 +5,38 @@
 
 @inject IntranetHomeContext _context
 
-<MudTable Items="@contacts" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<ContactManageman, bool>(FilterFunc)" @bind-SelectedItem="selectedItem">
+<MudTable Items="@contacts"
+          Dense="false"
+          Hover="true"
+          Striped="false"
+          Filter="new Func<ContactManageman, bool>(FilterFunc)"
+          @bind-SelectedItem="selectedItem">
+
     <ToolBarContent>
         <MudText Typo="Typo.h6">Contacts</MudText>
         <MudSpacer />
-        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField Placeholder="Search"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Class="mt-0"
+                      Immediate="true"
+                      @bind-Value="searchString">
+        </MudTextField>
     </ToolBarContent>
+
     <HeaderContent>
-        @foreach (var heading in headings)
-        {
-            <MudTh>@heading</MudTh>
-        }
+        <MudTh>Nama</MudTh>
+        <MudTh>Deskripsi</MudTh>
+        <MudTh>Deskripsi lain</MudTh>
+        <MudTh>Contact Person</MudTh>
+        <MudTh>Alamat</MudTh>
+        <MudTh>Alamat Lain</MudTh>
+        <MudTh>No Telp</MudTh>
+        <MudTh>No HP</MudTh>
+        <MudTh>Fax</MudTh>
     </HeaderContent>
+
     <RowTemplate>
         <MudTd DataLabel="Nama">@context.Nama</MudTd>
         <MudTd DataLabel="Deskripsi">@context.Deskripsi</MudTd>
@@ -27,42 +47,24 @@
         <MudTd DataLabel="Hpno">@context.Hpno</MudTd>
         <MudTd DataLabel="Faxno">@context.Faxno</MudTd>
     </RowTemplate>
+
     <PagerContent>
         <MudTablePager />
     </PagerContent>
+
 </MudTable>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudSwitch @bind-Value="hover" Color="Color.Primary">Hover</MudSwitch>
-    <MudSwitch @bind-Value="dense" Color="Color.Secondary">Dense</MudSwitch>
-    <MudSwitch @bind-Value="striped" Color="Color.Tertiary">Striped</MudSwitch>
-    <MudSwitch @bind-Value="bordered" Color="Color.Warning">Bordered</MudSwitch>
     <MudSpacer />
     <div style="min-width:200px;">
-        <MudText Class="align-self-center d-inline">Selected: @selectedItem?.Nama</MudText>
+        <MudText Class="align-self-center d-inline">Selected: @selectedItem.Nama</MudText>
     </div>
 </div>
 
 @code {
-    private bool dense = false;
-    private bool hover = true;
-    private bool striped = false;
-    private bool bordered = false;
     private string searchString = "";
-    private ContactManageman selectedItem = null;
-
+    private ContactManageman selectedItem = new ContactManageman();
     private IEnumerable<ContactManageman> contacts = new List<ContactManageman>();
-    private string[] headings = {
-        "Nama",
-        "Deskripsi",
-        "Deskripsi lain",
-        "Contact person",
-        "Alamat",
-        "Alamat lain",
-        "No telp",
-        "No HP",
-        "Fax"
-    };
 
     protected override async Task OnInitializedAsync()
     {

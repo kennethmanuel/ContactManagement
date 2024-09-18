@@ -1,0 +1,81 @@
+@page "/datagrid"
+@using ContactManagement.Models
+@using MudBlazor
+@using Microsoft.EntityFrameworkCore
+
+@inject IntranetHomeContext _context
+
+<MudDataGrid T="ContactManageman" Items="@_contacts" SortMode="SortMode.Multiple" Filterable="true"
+    QuickFilter="_quickFilter" Hover="true">
+    <ToolBarContent>
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Anchor="End" OnClick="@(() => OpenDrawer())">Tambah
+        </MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Nama" Title="Nama" />
+        <PropertyColumn Property="x => x.Deskripsi" Title="Deskripsi" />
+        <PropertyColumn Property="x => x.MultiDeskripsi" Title="Deskripsi Lain" />
+        <PropertyColumn Property="x => x.Alamat" Title="Alamat" />
+        <PropertyColumn Property="x => x.AlamatLain" Title="Alamat lain" />
+        <PropertyColumn Property="x => x.Telpno" Title="Telp No" />
+        <PropertyColumn Property="x => x.Faxno" Title="Fax No" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="ContactManageman" />
+    </PagerContent>
+
+</MudDataGrid>
+
+<MudDrawer @bind-Open="@_drawerOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
+    Width="45%">
+    <AddContactDrawer Contact="_selectedContact"></AddContactDrawer>
+</MudDrawer>
+
+@code {
+    private string? _searchString;
+    private ContactManageman _selectedContact = new ContactManageman();
+    private IEnumerable<ContactManageman> _contacts = new List<ContactManageman>();
+    private bool _drawerOpen;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _contacts = await _context.ContactManagemen.ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching contacts: {ex.Message}");
+        }
+    }
+
+    private void OpenDrawer()
+    {
+        _drawerOpen = true;
+    }
+
+    private Func<ContactManageman, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+        if (x.Nama!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.Deskripsi!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.MultiDeskripsi!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.Alamat!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.AlamatLain!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.Telpno!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        // FIXME: if (x.Faxno.Contains(_searchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        return false;
+    };
+
+}

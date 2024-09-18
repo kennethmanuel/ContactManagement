@@ -1,77 +1,72 @@
-﻿@page "/contact"
+﻿@page "/"
 @using ContactManagement.Models
+@using MudBlazor
 @using Microsoft.EntityFrameworkCore
 
 @inject IntranetHomeContext _context
 
-<h3>Contact</h3>
+<MudTable Items="@_contacts" Dense="false" Hover="true" Striped="false" @bind-SelectedItem="_selectedContact">
+    <ToolBarContent>
+        <MudTextField @bind-Value="_searchString" Placeholder="Quick Search" Adornment="Adornment.Start"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Anchor="End" OnClick="@(() => OpenDrawer())">Tambah
+        </MudButton>
+    </ToolBarContent>
 
-@if (isLoading)
-{
-    <p>Loading...</p>
-}
-else if (contacts != null && contacts.Any())
-{
-    <MudSimpleTable Style="overflow-x: auto;">
-        <thead>
-            <tr>
-                @foreach (var h in headings)
-                {
-                    <th>@h</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var c in contacts)
-            {
-                <tr>
-                    <td>@c.Nama</td>
-                    <td>@c.Deskripsi</td>
-                    <td>@c.MultiDeskripsi</td>
-                    <td>@c.Alamat</td>
-                    <td>@c.AlamatLain</td>
-                    <td>@c.Telpno</td>
-                    <td>@c.Hpno</td>
-                    <td>@c.Faxno</td>
-                </tr>
-            }
-        </tbody>
-    </MudSimpleTable>
-}
-else
-{
-    <p>No contacts found.</p>
-}
+    <HeaderContent>
+        <MudTh>Nama</MudTh>
+        <MudTh>Deskripsi</MudTh>
+        <MudTh>Deskripsi lain</MudTh>
+        <MudTh>Contact Person</MudTh>
+        <MudTh>Alamat</MudTh>
+        <MudTh>Alamat Lain</MudTh>
+        <MudTh>No Telp</MudTh>
+        <MudTh>No HP</MudTh>
+        <MudTh>Fax</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Nama">@context.Nama</MudTd>
+        <MudTd DataLabel="Deskripsi">@context.Deskripsi</MudTd>
+        <MudTd DataLabel="MultiDeskripsi">@context.MultiDeskripsi</MudTd>
+        <MudTd DataLabel="Alamat">@context.Alamat</MudTd>
+        <MudTd DataLabel="AlamatLain">@context.AlamatLain</MudTd>
+        <MudTd DataLabel="Telpno">@context.Telpno</MudTd>
+        <MudTd DataLabel="Hpno">@context.Hpno</MudTd>
+        <MudTd DataLabel="Faxno">@context.Faxno</MudTd>
+    </RowTemplate>
+
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+
+</MudTable>
+
+<MudDrawer @bind-Open="@_drawerOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
+    Width="45%">
+    <AddContactDrawer Contact="_selectedContact"></AddContactDrawer>
+</MudDrawer>
 
 @code {
-    string[] headings = {
-        "Nama",
-        "Deskripsi",
-        "Deskripsi lain",
-        "Contact person",
-        "Alamat",
-        "Alamat lain",
-        "No telp",
-        "No HP",
-        "Fax"
-    };
-
-    private List<ContactManageman> contacts;
-    private bool isLoading = true;
+    private string _searchString = "";
+    private ContactManageman _selectedContact = new ContactManageman();
+    private IEnumerable<ContactManageman> _contacts = new List<ContactManageman>();
+    private bool _drawerOpen;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            contacts = await _context.ContactManagemen.ToListAsync();
+            _contacts = await _context.ContactManagemen.ToListAsync();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching contacts: {ex.Message}");
         }
-        finally
-        {
-            isLoading = false;
-        }
+    }
+
+    private void OpenDrawer()
+    {
+        _drawerOpen = true;
     }
 }

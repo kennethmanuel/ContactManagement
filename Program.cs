@@ -12,9 +12,12 @@ builder.Services.AddMudServices();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddDbContext<IntranetHomeContext>(options =>
-    options.UseMySql("Server=192.168.106.225;Port=3306;Database=intranet_home;User Id=root;Password=myroot;", ServerVersion.AutoDetect("Server=192.168.106.225;Port=3306;Database=intranet_home;User Id=root;Password=myroot;")));
+const string CONNECTION_STRING = "Server=192.168.106.225;Port=3306;Database=intranet_home;User Id=root;Password=myroot;";
+ServerVersion serverVersion = ServerVersion.AutoDetect(CONNECTION_STRING);
 
+builder.Services.AddDbContext<IntranetHomeContext>(
+    options => options.UseMySql(CONNECTION_STRING, serverVersion)
+);
 
 var app = builder.Build();
 

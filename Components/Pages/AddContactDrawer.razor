@@ -1,0 +1,37 @@
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using ContactManagement.Models
+
+<MudItem>
+    <MudPaper Class="pa-4">
+        <MudForm @ref="_contactForm" @bind-IsValid="@_success" @bind-Errors="@_errors">
+            <MudTextField T="string" Label="Nama" />
+            <MudTextField T="string" Label="Deskripsi" />
+            <MudTextField T="string" Label="Deskripsi Lain" />
+            <MudTextField T="string" Label="Contact Person" />
+            <MudTextField T="string" Label="Alamat" />
+            <MudTextField T="string" Label="Alamat Lain" />
+            <MudTextField T="string" Label="No Telp" />
+            <MudTextField T="string" Label="No HP" />
+            <MudTextField T="string" Label="Fax" />
+        </MudForm>
+    </MudPaper>
+    <MudPaper Class="pa-4 mt-4">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" OnClick="@(()=> AddContact())">
+            Tambah</MudButton>
+    </MudPaper>
+</MudItem>
+
+
+@code {
+    [Parameter]
+    public ContactManageman? Contact { get; set; }
+    private bool _success;
+    private string[] _errors = { };
+    private MudForm? _contactForm;
+
+    private void AddContact()
+    {
+        // TODO:
+    }
+}

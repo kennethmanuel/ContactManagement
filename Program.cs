@@ -12,7 +12,7 @@ builder.Services.AddMudServices();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-const string CONNECTION_STRING = "Server=192.168.106.225;Port=3306;Database=intranet_home;User Id=root;Password=myroot;";
+var CONNECTION_STRING = builder.Configuration.GetConnectionString("IntranetHomeContext");
 ServerVersion serverVersion = ServerVersion.AutoDetect(CONNECTION_STRING);
 
 builder.Services.AddDbContext<IntranetHomeContext>(

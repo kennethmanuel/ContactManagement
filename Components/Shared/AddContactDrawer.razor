@@ -2,33 +2,51 @@
 @using System.ComponentModel.DataAnnotations
 @using ContactManagement.Models
 
-<MudItem>
-    <MudPaper Class="pa-4">
-        <MudForm @ref="_contactForm" @bind-IsValid="@_success" @bind-Errors="@_errors">
-            <MudTextField T="string" Label="Nama" />
-            <MudTextField T="string" Label="Deskripsi" />
-            <MudTextField T="string" Label="Deskripsi Lain" />
-            <MudTextField T="string" Label="Contact Person" />
-            <MudTextField T="string" Label="Alamat" />
-            <MudTextField T="string" Label="Alamat Lain" />
-            <MudTextField T="string" Label="No Telp" />
-            <MudTextField T="string" Label="No HP" />
-            <MudTextField T="string" Label="Fax" />
-        </MudForm>
-    </MudPaper>
-    <MudPaper Class="pa-4 mt-4">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" OnClick="@(()=> AddContact())">
-            Tambah</MudButton>
-    </MudPaper>
-</MudItem>
+<MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
+    Width="45%">
+    <MudItem>
+        <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close" OnClick="() => OnOpenChanged(false)" />
+    </MudItem>
+    <MudItem>
+        <MudPaper Class="pa-4">
+            <MudForm @ref="contactForm" @bind-IsValid="@isValidFormData" @bind-Errors="@errors">
+                <MudTextField T="string" Label="Nama" />
+                <MudTextField T="string" Label="Deskripsi" />
+                <MudTextField T="string" Label="Deskripsi Lain" />
+                <MudTextField T="string" Label="Contact Person" />
+                <MudTextField T="string" Label="Alamat" />
+                <MudTextField T="string" Label="Alamat Lain" />
+                <MudTextField T="string" Label="No Telp" />
+                <MudTextField T="string" Label="No HP" />
+                <MudTextField T="string" Label="Fax" />
+            </MudForm>
+        </MudPaper>
+        <MudPaper Class="pa-4 mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" OnClick="@(()=> AddContact())">
+                Tambah</MudButton>
+        </MudPaper>
+    </MudItem>
+</MudDrawer>
 
 
 @code {
     [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsOpenChanged { get; set; }
+
+    private async Task OnOpenChanged(bool value)
+    {
+        IsOpen = value;
+        await IsOpenChanged.InvokeAsync(value);
+    }
+
+    [Parameter]
     public ContactManageman? Contact { get; set; }
-    private bool _success;
-    private string[] _errors = { };
-    private MudForm? _contactForm;
+    private bool isValidFormData;
+    private string[] errors = { };
+    private MudForm? contactForm;
 
     private void AddContact()
     {

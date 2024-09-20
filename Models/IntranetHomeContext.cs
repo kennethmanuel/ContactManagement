@@ -53,7 +53,6 @@ public partial class IntranetHomeContext : DbContext
                 .HasColumnName("email");
             entity.Property(e => e.Faxno)
                 .HasMaxLength(2500)
-                .HasDefaultValueSql("''''")
                 .HasColumnName("faxno");
             entity.Property(e => e.Hpno)
                 .HasMaxLength(2500)

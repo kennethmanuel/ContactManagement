@@ -1,0 +1,61 @@
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using ContactManagement.Models
+@inject IntranetHomeContext DbContext
+
+<MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
+    Width="45%">
+    <MudItem>
+        <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close" OnClick="() => OnOpenChanged(false)" />
+    </MudItem>
+    <MudItem>
+        <MudPaper Class="pa-4">
+            <MudForm @ref="contactForm" @bind-IsValid="@isValidFormData" @bind-Errors="@errors">
+                <MudTextField T="string" Label="Nama" @bind-Value="@SelectedContact.Nama" />
+                <MudTextField T="string" Label="Deskripsi" @bind-Value="@SelectedContact.Deskripsi" />
+                <MudTextField T="string" Label="Deskripsi Lain" @bind-Value="@SelectedContact.MultiDeskripsi" />
+                <MudTextField T="string" Label="Contact Person" @bind-Value="@SelectedContact.Kontak" />
+                <MudTextField T="string" Label="Alamat" @bind-Value="@SelectedContact.Alamat" />
+                <MudTextField T="string" Label="Alamat Lain" @bind-Value="@SelectedContact.AlamatLain" />
+                <MudTextField T="string" Label="No Telp" @bind-Value="@SelectedContact.Telpno" />
+                <MudTextField T="string" Label="No HP" @bind-Value="@SelectedContact.Hpno" />
+                <MudTextField T="string" Label="Fax" @bind-Value="@SelectedContact.Faxno" />
+            </MudForm>
+        </MudPaper>
+        <MudPaper Class="pa-4 mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
+                OnClick="@(()=> EditContact())">
+                Save</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false"
+                OnClick="@(()=> DeleteContact(SelectedContact))">
+                Delete</MudButton>
+        </MudPaper>
+    </MudItem>
+</MudDrawer>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+    [Parameter] public required Contact SelectedContact { get; set; }
+    [Parameter] public EventCallback OnContactSave { get; set; }
+    private bool isValidFormData;
+    private string[] errors = { };
+    private MudForm? contactForm;
+    private async Task OnOpenChanged(bool isOpen)
+    {
+        IsOpen = isOpen;
+        await IsOpenChanged.InvokeAsync(isOpen);
+    }
+    private async void EditContact()
+    {
+        await DbContext.SaveChangesAsync();
+        await OnContactSave.InvokeAsync(null);
+    }
+
+    private async void DeleteContact(Contact contact)
+    {
+        DbContext.ContactManagemen.Remove(contact);
+        await DbContext.SaveChangesAsync();
+        await OnContactSave.InvokeAsync(null);
+    }
+}

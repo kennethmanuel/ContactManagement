@@ -4,14 +4,14 @@
 @using Microsoft.EntityFrameworkCore
 @using ContactManagement.Components.Shared
 
-@inject IntranetHomeContext _context
+@inject IntranetHomeContext dbcontext
 
-<MudDataGrid T="Contact" Items="@_contacts" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="_quickFilter"
-    Hover="true">
+<MudDataGrid T="Contact" Items="@contacts" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="_quickFilter"
+    Hover="true" RowClick="OnRowClick">
     <ToolBarContent>
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
             AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenDrawer())">Tambah
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenAddConctactDrawer())">Tambah
         </MudButton>
     </ToolBarContent>
     <Columns>
@@ -29,13 +29,16 @@
 
 </MudDataGrid>
 
-<AddContactDrawer @bind-IsOpen="drawerOpen" Contact="_selectedContact" OnContactSaved="LoadContacts" />
+<AddContactDrawer @bind-IsOpen="addContactDrawerOpen" OnContactSave="LoadContacts" />
+<EditContactDrawer @bind-IsOpen="editContactDrawerOpen" SelectedContact="selectedContact"
+    OnContactSave="LoadContacts" />
 
 @code {
-    private string? _searchString;
-    private Contact _selectedContact = new Contact();
-    private IEnumerable<Contact> _contacts = new List<Contact>();
-    private bool drawerOpen;
+    private string? searchString;
+    private IEnumerable<Contact> contacts = new List<Contact>();
+    private bool addContactDrawerOpen;
+    private Contact selectedContact = new Contact();
+    private bool editContactDrawerOpen;
     protected override async Task OnInitializedAsync()
     {
         await LoadContacts();
@@ -44,37 +47,49 @@
     {
         try
         {
-            _contacts = await _context.ContactManagemen.ToListAsync();
+            contacts = await dbcontext.ContactManagemen.ToListAsync();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching contacts: {ex.Message}");
         }
     }
-    private void OpenDrawer()
+    private void OpenAddConctactDrawer()
     {
-        drawerOpen = true;
+        addContactDrawerOpen = true;
+    }
+
+    private void OpenEditContactDrawer()
+    {
+        editContactDrawerOpen = true;
+    }
+    private void OnRowClick(DataGridRowClickEventArgs<Contact> args)
+    {
+        selectedContact = args.Item;
+        OpenEditContactDrawer();
     }
     private Func<Contact, bool> _quickFilter => x =>
     {
-        if (string.IsNullOrWhiteSpace(_searchString))
-            return true;
-        if (x.Nama!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (x.Deskripsi!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (x.MultiDeskripsi!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (x.Alamat!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (x.AlamatLain!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (x.Telpno!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrWhiteSpace(searchString))
             return true;
 
-        // FIXME: if (x.Faxno.Contains(_searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        // Use null conditional operator to avoid NullReferenceException
+        if (!string.IsNullOrEmpty(x.Nama) && x.Nama.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (!string.IsNullOrEmpty(x.Deskripsi) && x.Deskripsi.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (!string.IsNullOrEmpty(x.MultiDeskripsi) && x.MultiDeskripsi.Contains(searchString,
+    StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (!string.IsNullOrEmpty(x.Alamat) && x.Alamat.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (!string.IsNullOrEmpty(x.AlamatLain) && x.AlamatLain.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (!string.IsNullOrEmpty(x.Telpno) && x.Telpno.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (!string.IsNullOrEmpty(x.Faxno) && x.Faxno.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
 
         return false;
     };
-
 }

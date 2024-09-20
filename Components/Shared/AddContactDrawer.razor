@@ -30,12 +30,10 @@
     </MudItem>
 </MudDrawer>
 
-
 @code {
     [Parameter] public bool IsOpen { get; set; }
     [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
-    [Parameter] public Contact? Contact { get; set; }
-    [Parameter] public EventCallback OnContactSaved { get; set; }
+    [Parameter] public EventCallback OnContactSave { get; set; }
     private bool isValidFormData;
     private string[] errors = { };
     private MudForm? contactForm;
@@ -50,6 +48,7 @@
         DbContext.ContactManagemen.Add(newContact);
         await DbContext.SaveChangesAsync();
         newContact = new Contact();
-        await OnContactSaved.InvokeAsync(null);
+        await OnContactSave.InvokeAsync(null);
+        IsOpen = false;
     }
 }

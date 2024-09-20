@@ -1,7 +1,8 @@
-@page "/datagrid"
+@page "/"
 @using ContactManagement.Models
 @using MudBlazor
 @using Microsoft.EntityFrameworkCore
+@using ContactManagement.Components.Shared
 
 @inject IntranetHomeContext _context
 
@@ -28,16 +29,13 @@
 
 </MudDataGrid>
 
-<MudDrawer @bind-Open="@_drawerOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
-    Width="45%">
-    <AddContactDrawer Contact="_selectedContact"></AddContactDrawer>
-</MudDrawer>
+<AddContactDrawer @bind-IsOpen="drawerOpen" Contact="_selectedContact" />
 
 @code {
     private string? _searchString;
     private ContactManageman _selectedContact = new ContactManageman();
     private IEnumerable<ContactManageman> _contacts = new List<ContactManageman>();
-    private bool _drawerOpen;
+    private bool drawerOpen;
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,7 +51,7 @@
 
     private void OpenDrawer()
     {
-        _drawerOpen = true;
+        drawerOpen = true;
     }
 
     private Func<ContactManageman, bool> _quickFilter => x =>

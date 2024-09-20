@@ -25,5 +25,5 @@ public partial class ContactManageman
 
     public string? Hpno { get; set; }
 
-    public string? Autoid { get; set; }
+    public int Autoid { get; set; }
 }

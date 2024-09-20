@@ -1,6 +1,7 @@
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 @using ContactManagement.Models
+@inject IntranetHomeContext DbContext
 
 <MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
     Width="45%">
@@ -10,19 +11,20 @@
     <MudItem>
         <MudPaper Class="pa-4">
             <MudForm @ref="contactForm" @bind-IsValid="@isValidFormData" @bind-Errors="@errors">
-                <MudTextField T="string" Label="Nama" />
-                <MudTextField T="string" Label="Deskripsi" />
-                <MudTextField T="string" Label="Deskripsi Lain" />
-                <MudTextField T="string" Label="Contact Person" />
-                <MudTextField T="string" Label="Alamat" />
-                <MudTextField T="string" Label="Alamat Lain" />
-                <MudTextField T="string" Label="No Telp" />
-                <MudTextField T="string" Label="No HP" />
-                <MudTextField T="string" Label="Fax" />
+                <MudTextField T="string" Label="Nama" @bind-Value="@newContact.Nama" />
+                <MudTextField T="string" Label="Deskripsi" @bind-Value="@newContact.Deskripsi" />
+                <MudTextField T="string" Label="Deskripsi Lain" @bind-Value="@newContact.MultiDeskripsi" />
+                <MudTextField T="string" Label="Contact Person" @bind-Value="@newContact.Kontak" />
+                <MudTextField T="string" Label="Alamat" @bind-Value="@newContact.Alamat" />
+                <MudTextField T="string" Label="Alamat Lain" @bind-Value="@newContact.AlamatLain" />
+                <MudTextField T="string" Label="No Telp" @bind-Value="@newContact.Telpno" />
+                <MudTextField T="string" Label="No HP" @bind-Value="@newContact.Hpno" />
+                <MudTextField T="string" Label="Fax" @bind-Value="@newContact.Faxno" />
             </MudForm>
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" OnClick="@(()=> AddContact())">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
+                OnClick="@(()=> SaveContact())">
                 Tambah</MudButton>
         </MudPaper>
     </MudItem>
@@ -30,26 +32,24 @@
 
 
 @code {
-    [Parameter]
-    public bool IsOpen { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> IsOpenChanged { get; set; }
-
-    private async Task OnOpenChanged(bool value)
-    {
-        IsOpen = value;
-        await IsOpenChanged.InvokeAsync(value);
-    }
-
-    [Parameter]
-    public ContactManageman? Contact { get; set; }
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+    [Parameter] public Contact? Contact { get; set; }
+    [Parameter] public EventCallback OnContactSaved { get; set; }
     private bool isValidFormData;
     private string[] errors = { };
     private MudForm? contactForm;
-
-    private void AddContact()
+    private Contact newContact = new Contact();
+    private async Task OnOpenChanged(bool isOpen)
     {
-        // TODO:
+        IsOpen = isOpen;
+        await IsOpenChanged.InvokeAsync(isOpen);
+    }
+    private async void SaveContact()
+    {
+        DbContext.ContactManagemen.Add(newContact);
+        await DbContext.SaveChangesAsync();
+        newContact = new Contact();
+        await OnContactSaved.InvokeAsync(null);
     }
 }

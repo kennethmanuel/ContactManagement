@@ -16,7 +16,7 @@ public partial class IntranetHomeContext : DbContext
     {
     }
 
-    public virtual DbSet<ContactManageman> ContactManagemen { get; set; }
+    public virtual DbSet<Contact> ContactManagemen { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseMySql("name=IntranetHomeContext", Microsoft.EntityFrameworkCore.ServerVersion.Parse("11.5.2-mariadb"));
@@ -27,7 +27,7 @@ public partial class IntranetHomeContext : DbContext
             .UseCollation("utf8mb4_uca1400_ai_ci")
             .HasCharSet("utf8mb4");
 
-        modelBuilder.Entity<ContactManageman>(entity =>
+        modelBuilder.Entity<Contact>(entity =>
         {
             entity.HasKey(e => e.Autoid).HasName("PRIMARY");
 

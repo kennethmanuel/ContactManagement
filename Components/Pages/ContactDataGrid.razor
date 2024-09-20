@@ -6,8 +6,8 @@
 
 @inject IntranetHomeContext _context
 
-<MudDataGrid T="ContactManageman" Items="@_contacts" SortMode="SortMode.Multiple" Filterable="true"
-    QuickFilter="_quickFilter" Hover="true">
+<MudDataGrid T="Contact" Items="@_contacts" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="_quickFilter"
+    Hover="true">
     <ToolBarContent>
         <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
             AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -24,20 +24,23 @@
         <PropertyColumn Property="x => x.Faxno" Title="Fax No" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="ContactManageman" />
+        <MudDataGridPager T="Contact" />
     </PagerContent>
 
 </MudDataGrid>
 
-<AddContactDrawer @bind-IsOpen="drawerOpen" Contact="_selectedContact" />
+<AddContactDrawer @bind-IsOpen="drawerOpen" Contact="_selectedContact" OnContactSaved="LoadContacts" />
 
 @code {
     private string? _searchString;
-    private ContactManageman _selectedContact = new ContactManageman();
-    private IEnumerable<ContactManageman> _contacts = new List<ContactManageman>();
+    private Contact _selectedContact = new Contact();
+    private IEnumerable<Contact> _contacts = new List<Contact>();
     private bool drawerOpen;
-
     protected override async Task OnInitializedAsync()
+    {
+        await LoadContacts();
+    }
+    private async Task LoadContacts()
     {
         try
         {
@@ -48,13 +51,11 @@
             Console.WriteLine($"Error fetching contacts: {ex.Message}");
         }
     }
-
     private void OpenDrawer()
     {
         drawerOpen = true;
     }
-
-    private Func<ContactManageman, bool> _quickFilter => x =>
+    private Func<Contact, bool> _quickFilter => x =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))
             return true;

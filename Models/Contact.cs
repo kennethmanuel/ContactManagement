@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ContactManagement.Models;
 
-public partial class ContactManageman
+public partial class Contact
 {
     public string? Nama { get; set; }
 

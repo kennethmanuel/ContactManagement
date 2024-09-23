@@ -1,12 +1,16 @@
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 @using ContactManagement.Models
+@using ContactManagement.Services
 @inject IntranetHomeContext DbContext
+@inject ISnackbar Snackbar
+@inject IContactService ContactService
 
-<MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
+<MudDrawer @bind-Open="@IsDrawerOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
     Width="45%">
     <MudItem>
-        <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close" OnClick="() => OnOpenChanged(false)" />
+        <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close"
+            OnClick="() => OnDrawerOpenChanged(false)" />
     </MudItem>
     <MudItem>
         <MudPaper Class="pa-4">
@@ -24,38 +28,56 @@
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
-                OnClick="@(()=> EditContact())">
+                OnClick="@(()=> OnEditButtonClick())">
                 Save</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false"
-                OnClick="@(()=> DeleteContact(SelectedContact))">
+                OnClick="@(()=> OnDeleteButtonClick())">
                 Delete</MudButton>
         </MudPaper>
     </MudItem>
 </MudDrawer>
 
 @code {
-    [Parameter] public bool IsOpen { get; set; }
-    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+    [Parameter] public bool IsDrawerOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsDrawerOpenChanged { get; set; }
     [Parameter] public required Contact SelectedContact { get; set; }
     [Parameter] public EventCallback OnContactSave { get; set; }
     private bool isValidFormData;
     private string[] errors = { };
     private MudForm? contactForm;
-    private async Task OnOpenChanged(bool isOpen)
+    private async Task OnDrawerOpenChanged(bool isOpen)
     {
-        IsOpen = isOpen;
-        await IsOpenChanged.InvokeAsync(isOpen);
+        IsDrawerOpen = isOpen;
+        await IsDrawerOpenChanged.InvokeAsync(isOpen);
     }
-    private async void EditContact()
+    private async Task OnEditButtonClick()
     {
-        await DbContext.SaveChangesAsync();
-        await OnContactSave.InvokeAsync(null);
+        try
+        {
+            if (!isValidFormData) return;
+            await ContactService.UpdateContactAsync(SelectedContact);
+            Snackbar.Add("Contact edited successfully!", Severity.Success);
+            await OnContactSave.InvokeAsync(null);
+            IsDrawerOpen = false;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to edit contact: {ex.Message}", Severity.Error);
+        }
     }
-
-    private async void DeleteContact(Contact contact)
+    private async Task OnDeleteButtonClick()
     {
-        DbContext.ContactManagemen.Remove(contact);
-        await DbContext.SaveChangesAsync();
-        await OnContactSave.InvokeAsync(null);
+        try
+        {
+            if (!isValidFormData) return;
+            await ContactService.DeleteContactAsync(SelectedContact);
+            Snackbar.Add("Contact deleted successfully!", Severity.Success);
+            await OnContactSave.InvokeAsync(null);
+            IsDrawerOpen = false;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to delete contact: {ex.Message}", Severity.Error);
+        }
     }
 }

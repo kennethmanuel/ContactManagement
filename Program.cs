@@ -1,6 +1,7 @@
 using MudBlazor.Services;
 using ContactManagement.Components;
 using ContactManagement.Models;
+using ContactManagement.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,8 @@ builder.Services.AddMudServices();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<IContactService, ContactService>();
 
 var CONNECTION_STRING = builder.Configuration.GetConnectionString("IntranetHomeContext");
 ServerVersion serverVersion = ServerVersion.AutoDetect(CONNECTION_STRING);

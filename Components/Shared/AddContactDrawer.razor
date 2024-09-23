@@ -1,7 +1,10 @@
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 @using ContactManagement.Models
+@using ContactManagement.Services
 @inject IntranetHomeContext DbContext
+@inject ISnackbar Snackbar
+@inject IContactService ContactService
 
 <MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
     Width="45%">
@@ -24,7 +27,7 @@
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
-                OnClick="@(()=> SaveContact())">
+                OnClick="@(()=> OnAddContactButtonClick())">
                 Tambah</MudButton>
         </MudPaper>
     </MudItem>
@@ -43,12 +46,20 @@
         IsOpen = isOpen;
         await IsOpenChanged.InvokeAsync(isOpen);
     }
-    private async void SaveContact()
+    private async void OnAddContactButtonClick()
     {
-        DbContext.ContactManagemen.Add(newContact);
-        await DbContext.SaveChangesAsync();
-        newContact = new Contact();
-        await OnContactSave.InvokeAsync(null);
-        IsOpen = false;
+        try
+        {
+            if (!isValidFormData) return;
+            await ContactService.AddContactAsync(newContact);
+            Snackbar.Add("Contact added successfully!", Severity.Success);
+            newContact = new Contact();
+            await OnContactSave.InvokeAsync(null);
+            IsOpen = false;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to add contact: {ex.Message}", Severity.Error);
+        }
     }
 }

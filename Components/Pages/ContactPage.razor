@@ -29,16 +29,16 @@
 
 </MudDataGrid>
 
-<AddContactDrawer @bind-IsOpen="addContactDrawerOpen" OnContactSave="LoadContacts" />
-<EditContactDrawer @bind-IsOpen="editContactDrawerOpen" SelectedContact="selectedContact"
+<AddContactDrawer @bind-IsOpen="addContactDrawerIsOpen" OnContactSave="LoadContacts" />
+<EditContactDrawer @bind-IsDrawerOpen="editContactDrawerIsOpen" SelectedContact="selectedContact"
     OnContactSave="LoadContacts" />
 
 @code {
     private string? searchString;
     private IEnumerable<Contact> contacts = new List<Contact>();
-    private bool addContactDrawerOpen;
+    private bool addContactDrawerIsOpen;
     private Contact selectedContact = new Contact();
-    private bool editContactDrawerOpen;
+    private bool editContactDrawerIsOpen;
     protected override async Task OnInitializedAsync()
     {
         await LoadContacts();
@@ -56,12 +56,12 @@
     }
     private void OpenAddConctactDrawer()
     {
-        addContactDrawerOpen = true;
+        addContactDrawerIsOpen = true;
     }
 
     private void OpenEditContactDrawer()
     {
-        editContactDrawerOpen = true;
+        editContactDrawerIsOpen = true;
     }
     private void OnRowClick(DataGridRowClickEventArgs<Contact> args)
     {

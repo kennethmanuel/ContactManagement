@@ -49,6 +49,8 @@
     }
     private async void HandleAddButtonClick()
     {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
         try
         {
             if (!isValidFormData) return;

@@ -52,6 +52,8 @@
     }
     private async Task HandleEditButtonClick()
     {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
         try
         {
             if (!_isValidFormData) return;
@@ -67,6 +69,8 @@
     }
     private async Task HandleDeleteButtonClick()
     {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
         try
         {
             if (!_isValidFormData) return;

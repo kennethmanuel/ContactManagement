@@ -9,7 +9,8 @@
 <MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
     Width="45%">
     <MudItem>
-        <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close" OnClick="() => OnOpenChanged(false)" />
+        <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close"
+            OnClick="() => HandleDrawerOpenChange(false)" />
     </MudItem>
     <MudItem>
         <MudPaper Class="pa-4">
@@ -27,7 +28,7 @@
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
-                OnClick="@(()=> OnAddContactButtonClick())">
+                OnClick="@(()=> HandleAddButtonClick())">
                 Tambah</MudButton>
         </MudPaper>
     </MudItem>
@@ -36,17 +37,17 @@
 @code {
     [Parameter] public bool IsOpen { get; set; }
     [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
-    [Parameter] public EventCallback OnContactSave { get; set; }
+    [Parameter] public EventCallback OnContactAdd { get; set; }
     private bool isValidFormData;
     private string[] errors = { };
     private MudForm? contactForm;
     private Contact newContact = new Contact();
-    private async Task OnOpenChanged(bool isOpen)
+    private async Task HandleDrawerOpenChange(bool isOpen)
     {
         IsOpen = isOpen;
         await IsOpenChanged.InvokeAsync(isOpen);
     }
-    private async void OnAddContactButtonClick()
+    private async void HandleAddButtonClick()
     {
         try
         {
@@ -54,7 +55,7 @@
             await ContactService.AddContactAsync(newContact);
             Snackbar.Add("Contact added successfully!", Severity.Success);
             newContact = new Contact();
-            await OnContactSave.InvokeAsync(null);
+            await OnContactAdd.InvokeAsync(null);
             IsOpen = false;
         }
         catch (Exception ex)

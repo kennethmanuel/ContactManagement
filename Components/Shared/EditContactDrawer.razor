@@ -6,15 +6,15 @@
 @inject ISnackbar Snackbar
 @inject IContactService ContactService
 
-<MudDrawer @bind-Open="@IsDrawerOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
+<MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
     Width="45%">
     <MudItem>
         <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close"
-            OnClick="() => OnDrawerOpenChanged(false)" />
+            OnClick="() => HandleDrawerOpenChange(false)" />
     </MudItem>
     <MudItem>
         <MudPaper Class="pa-4">
-            <MudForm @ref="contactForm" @bind-IsValid="@isValidFormData" @bind-Errors="@errors">
+            <MudForm @ref="_contactForm" @bind-IsValid="@_isValidFormData" @bind-Errors="@_errors">
                 <MudTextField T="string" Label="Nama" @bind-Value="@SelectedContact.Nama" />
                 <MudTextField T="string" Label="Deskripsi" @bind-Value="@SelectedContact.Deskripsi" />
                 <MudTextField T="string" Label="Deskripsi Lain" @bind-Value="@SelectedContact.MultiDeskripsi" />
@@ -28,52 +28,52 @@
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
-                OnClick="@(()=> OnEditButtonClick())">
+                OnClick="@(()=> HandleEditButtonClick())">
                 Save</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false"
-                OnClick="@(()=> OnDeleteButtonClick())">
+                OnClick="@(()=> HandleDeleteButtonClick())">
                 Delete</MudButton>
         </MudPaper>
     </MudItem>
 </MudDrawer>
 
 @code {
-    [Parameter] public bool IsDrawerOpen { get; set; }
-    [Parameter] public EventCallback<bool> IsDrawerOpenChanged { get; set; }
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
     [Parameter] public required Contact SelectedContact { get; set; }
-    [Parameter] public EventCallback OnContactSave { get; set; }
-    private bool isValidFormData;
-    private string[] errors = { };
-    private MudForm? contactForm;
-    private async Task OnDrawerOpenChanged(bool isOpen)
+    [Parameter] public EventCallback OnContactEdit { get; set; }
+    private bool _isValidFormData;
+    private string[] _errors = { };
+    private MudForm? _contactForm;
+    private async Task HandleDrawerOpenChange(bool isOpen)
     {
-        IsDrawerOpen = isOpen;
-        await IsDrawerOpenChanged.InvokeAsync(isOpen);
+        IsOpen = isOpen;
+        await IsOpenChanged.InvokeAsync(isOpen);
     }
-    private async Task OnEditButtonClick()
+    private async Task HandleEditButtonClick()
     {
         try
         {
-            if (!isValidFormData) return;
+            if (!_isValidFormData) return;
             await ContactService.UpdateContactAsync(SelectedContact);
             Snackbar.Add("Contact edited successfully!", Severity.Success);
-            await OnContactSave.InvokeAsync(null);
-            IsDrawerOpen = false;
+            await OnContactEdit.InvokeAsync(null);
+            IsOpen = false;
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Failed to edit contact: {ex.Message}", Severity.Error);
         }
     }
-    private async Task OnDeleteButtonClick()
+    private async Task HandleDeleteButtonClick()
     {
         try
         {
-            if (!isValidFormData) return;
+            if (!_isValidFormData) return;
             await ContactService.DeleteContactAsync(SelectedContact);
             Snackbar.Add("Contact deleted successfully!", Severity.Success);
-            await OnContactSave.InvokeAsync(null);
-            IsDrawerOpen = false;
+            await OnContactEdit.InvokeAsync(null);
+            IsOpen = false;
         }
         catch (Exception ex)
         {

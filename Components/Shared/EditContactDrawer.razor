@@ -2,9 +2,11 @@
 @using System.ComponentModel.DataAnnotations
 @using ContactManagement.Models
 @using ContactManagement.Services
+@using Microsoft.EntityFrameworkCore
 @inject IntranetHomeContext DbContext
 @inject ISnackbar Snackbar
 @inject IContactService ContactService
+@inject IDialogService DialogService
 
 <MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
     Width="45%">
@@ -62,6 +64,39 @@
             await OnContactEdit.InvokeAsync(null);
             IsOpen = false;
         }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            Console.WriteLine($"Concurrency Exception: {ex.Message}");
+            var result = await ShowOverrideConccurencyUpdate();
+            if (result.Canceled)
+            {
+                return;
+            }
+
+            foreach (var entry in ex.Entries)
+            {
+                if (entry.Entity is Contact)
+                {
+                    var proposedValues = entry.CurrentValues;
+                    var databaseValues = entry.GetDatabaseValues();
+                    
+                    foreach (var property in proposedValues.Properties)
+                    {
+                        var proposedValue = proposedValues[property];
+                        var databaseValue = databaseValues[property];
+
+                        proposedValues[property] = proposedValue;
+                    }
+                    entry.OriginalValues.SetValues(databaseValues);
+                }
+                else
+                {
+                    throw new NotSupportedException(
+                        "Don't know how to handle concurrency conflicts for "
+                        + entry.Metadata.Name);
+                }
+            }
+        }
         catch (Exception ex)
         {
             Snackbar.Add($"Failed to edit contact: {ex.Message}", Severity.Error);
@@ -71,17 +106,53 @@
     {
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
+        var result = await ShowDeleteDialog();
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
         try
         {
             if (!_isValidFormData) return;
             await ContactService.DeleteContactAsync(SelectedContact);
-            Snackbar.Add("Contact deleted successfully!", Severity.Success);
-            await OnContactEdit.InvokeAsync(null);
-            IsOpen = false;
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Failed to delete contact: {ex.Message}", Severity.Error);
         }
+    }
+
+    private async Task<DialogResult> ShowDeleteDialog()
+    {
+        var parameters = new DialogParameters<Dialog>
+{
+{ x => x.ContentText, "Do you really want to delete these records? This process cannot be undone." },
+{ x => x.ButtonText, "Delete" },
+{ x => x.Color, Color.Error }
+};
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        var dialog = DialogService.Show<Dialog>("Delete", parameters, options);
+        var result = await dialog.Result;
+
+        return result;
+    }
+
+    private async Task<DialogResult> ShowOverrideConccurencyUpdate()
+    {
+        var parameters = new DialogParameters<Dialog>
+{
+{ x => x.ContentText, "There was a change since data was previously updated (Someone have change the data you are currently updating since you you started editing). If you choose override, their changes will be overriden with current edit and their edit will be lost!" },
+{ x => x.ButtonText, "Delete" },
+{ x => x.Color, Color.Error }
+};
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        var dialog = DialogService.Show<Dialog>("Delete", parameters, options);
+        var result = await dialog.Result;
+
+        return result;
     }
 }

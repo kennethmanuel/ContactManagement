@@ -21,6 +21,7 @@
             <PropertyColumn Property="x => x.MultiDeskripsi" Title="Deskripsi Lain" />
             <PropertyColumn Property="x => x.Alamat" Title="Alamat" />
             <PropertyColumn Property="x => x.AlamatLain" Title="Alamat lain" />
+            <PropertyColumn Property="x => x.Hpno" Title="Hp No" />
             <PropertyColumn Property="x => x.Telpno" Title="Telp No" />
             <PropertyColumn Property="x => x.Faxno" Title="Fax No" />
         </Columns>
@@ -92,6 +93,8 @@
         if (!string.IsNullOrEmpty(x.Alamat) && x.Alamat.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         if (!string.IsNullOrEmpty(x.AlamatLain) && x.AlamatLain.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (!string.IsNullOrEmpty(x.Hpno) && x.Hpno.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         if (!string.IsNullOrEmpty(x.Telpno) && x.Telpno.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;

@@ -15,12 +15,17 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<IContactService, ContactService>();
 
-var CONNECTION_STRING = builder.Configuration.GetConnectionString("IntranetHomeContext");
+
+string? CONNECTION_STRING = builder.Configuration.GetConnectionString("IntranetHomeContext");
 ServerVersion serverVersion = ServerVersion.AutoDetect(CONNECTION_STRING);
 
-builder.Services.AddDbContext<IntranetHomeContext>(
-    options => options.UseMySql(CONNECTION_STRING, serverVersion)
+builder.Services.AddDbContextFactory<IntranetHomeContext>(
+    opt => opt.UseMySql(CONNECTION_STRING, serverVersion)
 );
+
+// builder.Services.AddDbContext<IntranetHomeContext>(
+//     options => options.UseMySql(CONNECTION_STRING, serverVersion)
+// );
 
 var app = builder.Build();
 

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ContactManagement.Models;
 
+[Table("contact_managemen")]
 public partial class Contact
 {
     public string? Nama { get; set; }
@@ -26,4 +29,7 @@ public partial class Contact
     public string? Hpno { get; set; }
 
     public int Autoid { get; set; }
+
+    [ConcurrencyCheck]
+    public Guid? Version { get; set; }
 }

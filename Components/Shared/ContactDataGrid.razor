@@ -1,9 +1,10 @@
 ﻿@using ContactManagement.Models
+@using ContactManagement.Services
 @using MudBlazor
 @using Microsoft.EntityFrameworkCore
 @using ContactManagement.Components.Shared
-
 @inject IntranetHomeContext dbcontext
+@inject IContactService ContactService
 
 <div>
     <MudDataGrid T="Contact" Items="@contacts" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="_quickFilter"
@@ -12,7 +13,7 @@
             <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                 AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => HandleAddContactDrawerButton())">
-                Tambah
+                Add New Contact
             </MudButton>
         </ToolBarContent>
         <Columns>
@@ -48,21 +49,11 @@
     }
     private async Task LoadContacts()
     {
-        try
-        {
-            contacts = await dbcontext.ContactManagemen.ToListAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error fetching contacts: {ex.Message}");
-        }
+        contacts = await ContactService.GetContactsAsync();
     }
     private void HandleAddContactDrawerButton()
     {
-        if (!_addContactDrawerIsOpen) // Only set to true if it's not already open
-        {
-            _addContactDrawerIsOpen = true;
-        }
+        _addContactDrawerIsOpen = !_addContactDrawerIsOpen;
     }
 
     private void HandleEditContactDrawerButton()

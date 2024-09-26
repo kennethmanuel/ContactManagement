@@ -1,4 +1,5 @@
-﻿using ContactManagement.Models;
+﻿using System.Data;
+using ContactManagement.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagement.Services;
@@ -21,7 +22,7 @@ public class ContactService : IContactService
         catch (Exception ex)
         {
             return [];
-            throw new ApplicationException("Problem with database", ex);
+            throw new ApplicationException($"Unresolved application problem when getting a list of contact to database: {ex.Message}", ex);
         }
     }
     public async Task AddContactAsync(Contact contact)
@@ -34,7 +35,7 @@ public class ContactService : IContactService
         }
         catch (Exception ex)
         {
-            throw new ApplicationException("Problem with database", ex);
+            throw new ApplicationException($"Unresolved application problem when adding contact to database: {ex.Message}", ex);
         }
     }
     public async Task UpdateContactAsync(Contact contact)
@@ -45,11 +46,15 @@ public class ContactService : IContactService
             dbContext.ContactManagemen.Update(contact);
             contact.Version = Guid.NewGuid();
             await dbContext.SaveChangesAsync();
-
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
-            throw new ApplicationException("Problem with database" + ex.Message, ex);
+            Console.WriteLine(ex.GetType());
+            throw new ApplicationException($"Unresolved application problem when updating contact to database: {ex.Message}", ex);
         }
     }
     public async Task DeleteContactAsync(Contact contact)
@@ -60,9 +65,13 @@ public class ContactService : IContactService
             dbContext.ContactManagemen.Remove(contact);
             await dbContext.SaveChangesAsync();
         }
+        catch (DBConcurrencyException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
-            throw new ApplicationException("Problem with database", ex);
+            throw new ApplicationException($"Unresolved application problem when deleting contact to database: {ex.Message}", ex);
         }
     }
 }

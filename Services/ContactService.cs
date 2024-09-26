@@ -44,12 +44,7 @@ public class ContactService : IContactService
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
             dbContext.ContactManagemen.Update(contact);
-            contact.Version = Guid.NewGuid();
             await dbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            throw;
         }
         catch (Exception ex)
         {
@@ -64,10 +59,6 @@ public class ContactService : IContactService
             using var dbContext = _dbContextFactory.CreateDbContext();
             dbContext.ContactManagemen.Remove(contact);
             await dbContext.SaveChangesAsync();
-        }
-        catch (DBConcurrencyException)
-        {
-            throw;
         }
         catch (Exception ex)
         {

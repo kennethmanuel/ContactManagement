@@ -21,6 +21,7 @@ public partial class IntranetHomeContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseMySql("name=IntranetHomeContext", Microsoft.EntityFrameworkCore.ServerVersion.Parse("11.5.2-mariadb"));
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -29,22 +30,21 @@ public partial class IntranetHomeContext : DbContext
 
         modelBuilder.Entity<Contact>(entity =>
         {
-            entity.HasKey(e => e.Autoid).HasName("PRIMARY");
-
             entity
+                .HasNoKey()
                 .ToTable("contact_managemen")
                 .HasCharSet("latin1")
                 .UseCollation("latin1_swedish_ci");
 
-            entity.Property(e => e.Autoid)
-                .HasColumnType("int(11)")
-                .HasColumnName("autoid");
             entity.Property(e => e.Alamat)
                 .HasMaxLength(2500)
                 .HasColumnName("alamat");
             entity.Property(e => e.AlamatLain)
                 .HasMaxLength(2500)
                 .HasColumnName("alamat_lain");
+            entity.Property(e => e.Autoid)
+                .HasMaxLength(25)
+                .HasColumnName("autoid");
             entity.Property(e => e.Deskripsi)
                 .HasMaxLength(2500)
                 .HasColumnName("deskripsi");
@@ -53,6 +53,7 @@ public partial class IntranetHomeContext : DbContext
                 .HasColumnName("email");
             entity.Property(e => e.Faxno)
                 .HasMaxLength(2500)
+                .HasDefaultValueSql("''''")
                 .HasColumnName("faxno");
             entity.Property(e => e.Hpno)
                 .HasMaxLength(2500)

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagement.Models;
 
-[Table("contact_managemen")]
 public partial class Contact
 {
+    [Key]
+    public string? Autoid { get; set; }
+
     public string? Nama { get; set; }
 
     public string? Deskripsi { get; set; }
@@ -28,8 +30,11 @@ public partial class Contact
 
     public string? Hpno { get; set; }
 
-    public int Autoid { get; set; }
-
-    [ConcurrencyCheck]
-    public Guid? Version { get; set; }
+    public static Contact CreateNewContact()
+    {
+        return new Contact
+        {
+            Autoid = Guid.NewGuid().ToString() // Generate a new Autoid for new contacts
+        };
+    }
 }

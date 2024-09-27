@@ -27,17 +27,9 @@ public class ContactService : IContactService
     }
     public async Task AddContactAsync(Contact contact)
     {
-        try
-        {
-            using var dbContext = _dbContextFactory.CreateDbContext();
-            contact.Autoid = dbContext.GenerateAutoid();
-            dbContext.ContactManagemen.Add(contact);
-            await dbContext.SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException($"Unresolved application problem when adding contact to database: {ex.Message}", ex);
-        }
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        dbContext.ContactManagemen.Add(contact);
+        await dbContext.SaveChangesAsync();
     }
     public async Task UpdateContactAsync(Contact contact)
     {
@@ -67,8 +59,4 @@ public class ContactService : IContactService
         }
     }
 
-    public string GenerateAutoId()
-    {
-        return String.Empty;
-    }
 }

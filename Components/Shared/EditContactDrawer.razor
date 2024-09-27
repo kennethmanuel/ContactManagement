@@ -59,11 +59,11 @@
 
     protected override void OnInitialized()
     {
-        Console.WriteLine(SelectedContact.Telpno);
     }
     private async Task HandleDrawerCloseButton()
     {
         IsOpen = false;
+        Console.WriteLine(SelectedContact.Telpno);
         await IsOpenChanged.InvokeAsync(false);
     }
     private async Task HandleEditButtonClick()

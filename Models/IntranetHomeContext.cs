@@ -30,12 +30,16 @@ public partial class IntranetHomeContext : DbContext
 
         modelBuilder.Entity<Contact>(entity =>
         {
+            entity.HasKey(e => e.Pkid).HasName("PRIMARY");
+
             entity
                 .ToTable("contact_managemen")
                 .HasCharSet("latin1")
                 .UseCollation("latin1_swedish_ci");
 
-            entity.HasKey(e => e.Autoid);
+            entity.Property(e => e.Pkid)
+                .HasColumnType("int(11)")
+                .HasColumnName("pkid");
             entity.Property(e => e.Alamat)
                 .HasMaxLength(2500)
                 .HasColumnName("alamat");
@@ -53,7 +57,7 @@ public partial class IntranetHomeContext : DbContext
                 .HasColumnName("email");
             entity.Property(e => e.Faxno)
                 .HasMaxLength(2500)
-                .HasDefaultValueSql("")
+                .HasDefaultValueSql("''''")
                 .HasColumnName("faxno");
             entity.Property(e => e.Hpno)
                 .HasMaxLength(2500)
@@ -74,17 +78,4 @@ public partial class IntranetHomeContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-    public string GenerateAutoid()
-    {
-        var maxAutoid = ContactManagemen
-            .Where(c => !string.IsNullOrEmpty(c.Autoid))
-            .Select(c => Convert.ToInt64(c.Autoid)) // Directly convert Autoid to integer
-            .OrderByDescending(id => id)
-            .FirstOrDefault();
-
-        long newAutoid = maxAutoid + 1;
-
-        return newAutoid.ToString();
-    }
 }

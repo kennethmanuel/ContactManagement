@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagement.Models;
 
 public partial class Contact
 {
-    [Key]
-    public string? Autoid { get; set; }
-
     public string? Nama { get; set; }
 
     public string? Deskripsi { get; set; }
@@ -29,4 +24,8 @@ public partial class Contact
     public string? Telpno { get; set; }
 
     public string? Hpno { get; set; }
+
+    public string? Autoid { get; set; }
+
+    public int Pkid { get; set; }
 }

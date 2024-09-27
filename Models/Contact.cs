@@ -29,12 +29,4 @@ public partial class Contact
     public string? Telpno { get; set; }
 
     public string? Hpno { get; set; }
-
-    public static Contact CreateNewContact()
-    {
-        return new Contact
-        {
-            Autoid = Guid.NewGuid().ToString() // Generate a new Autoid for new contacts
-        };
-    }
 }

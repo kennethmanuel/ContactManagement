@@ -30,6 +30,7 @@ public class ContactService : IContactService
         try
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
+            contact.Autoid = dbContext.GenerateAutoid();
             dbContext.ContactManagemen.Add(contact);
             await dbContext.SaveChangesAsync();
         }
@@ -64,5 +65,10 @@ public class ContactService : IContactService
         {
             throw new ApplicationException($"Unresolved application problem when deleting contact to database: {ex.Message}", ex);
         }
+    }
+
+    public string GenerateAutoId()
+    {
+        return String.Empty;
     }
 }

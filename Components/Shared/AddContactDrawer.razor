@@ -10,20 +10,29 @@
     Width="45%">
     <MudItem>
         <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close"
-            OnClick="() => HandleDrawerOpenChange(false)" />
+            OnClick="() => HandleDrawerCloseButton()" />
     </MudItem>
     <MudItem>
         <MudPaper Class="pa-4">
             <MudForm @ref="contactForm" @bind-IsValid="@isValidFormData" @bind-Errors="@errors">
-                <MudTextField T="string" Label="Nama" @bind-Value="@newContact.Nama" />
-                <MudTextField T="string" Label="Deskripsi" @bind-Value="@newContact.Deskripsi" />
-                <MudTextField T="string" Label="Deskripsi Lain" @bind-Value="@newContact.MultiDeskripsi" />
-                <MudTextField T="string" Label="Contact Person" @bind-Value="@newContact.Kontak" />
-                <MudTextField T="string" Label="Alamat" @bind-Value="@newContact.Alamat" />
-                <MudTextField T="string" Label="Alamat Lain" @bind-Value="@newContact.AlamatLain" />
-                <MudTextField T="string" Label="No Telp" @bind-Value="@newContact.Telpno" />
-                <MudTextField T="string" Label="No HP" @bind-Value="@newContact.Hpno" />
-                <MudTextField T="string" Label="Fax" @bind-Value="@newContact.Faxno" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Nama"
+                    @bind-Value="@newContact.Nama" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Deskripsi"
+                    @bind-Value="@newContact.Deskripsi" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Deskripsi Lain"
+                    @bind-Value="@newContact.MultiDeskripsi" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Contact Person"
+                    @bind-Value="@newContact.Kontak" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat"
+                    @bind-Value="@newContact.Alamat" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat Lain"
+                    @bind-Value="@newContact.AlamatLain" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No Telp"
+                    @bind-Value="@newContact.Telpno" Lines="5" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No HP"
+                    @bind-Value="@newContact.Hpno" Lines="5" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Fax"
+                    @bind-Value="@newContact.Faxno" />
             </MudForm>
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
@@ -42,10 +51,10 @@
     private string[] errors = { };
     private MudForm? contactForm;
     private Contact newContact = new Contact();
-    private async Task HandleDrawerOpenChange(bool isOpen)
+    private async Task HandleDrawerCloseButton()
     {
-        IsOpen = isOpen;
-        await IsOpenChanged.InvokeAsync(isOpen);
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(false);
     }
     private async void HandleAddButtonClick()
     {
@@ -56,8 +65,8 @@
             if (!isValidFormData) return;
             await ContactService.AddContactAsync(newContact);
             Snackbar.Add("Contact added successfully!", Severity.Success);
-            newContact = new Contact();
-            await OnContactAdd.InvokeAsync(null);
+            newContact = new Contact(); // clear
+            await OnContactAdd.InvokeAsync();
             IsOpen = false;
         }
         catch (Exception ex)

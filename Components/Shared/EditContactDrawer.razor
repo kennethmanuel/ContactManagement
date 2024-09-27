@@ -12,20 +12,29 @@
     Width="45%">
     <MudItem>
         <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close"
-            OnClick="() => HandleDrawerOpenChange(false)" />
+            OnClick="() => HandleDrawerCloseButton()" />
     </MudItem>
     <MudItem>
         <MudPaper Class="pa-4">
             <MudForm @ref="_contactForm" @bind-IsValid="@_isValidFormData" @bind-Errors="@_errors">
-                <MudTextField T="string" Label="Nama" @bind-Value="@SelectedContact.Nama" />
-                <MudTextField T="string" Label="Deskripsi" @bind-Value="@SelectedContact.Deskripsi" />
-                <MudTextField T="string" Label="Deskripsi Lain" @bind-Value="@SelectedContact.MultiDeskripsi" />
-                <MudTextField T="string" Label="Contact Person" @bind-Value="@SelectedContact.Kontak" />
-                <MudTextField T="string" Label="Alamat" @bind-Value="@SelectedContact.Alamat" />
-                <MudTextField T="string" Label="Alamat Lain" @bind-Value="@SelectedContact.AlamatLain" />
-                <MudTextField T="string" Label="No Telp" @bind-Value="@SelectedContact.Telpno" />
-                <MudTextField T="string" Label="No HP" @bind-Value="@SelectedContact.Hpno" />
-                <MudTextField T="string" Label="Fax" @bind-Value="@SelectedContact.Faxno" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Nama"
+                    @bind-Value="@SelectedContact.Nama" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Deskripsi"
+                    @bind-Value="@SelectedContact.Deskripsi" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Deskripsi Lain"
+                    @bind-Value="@SelectedContact.MultiDeskripsi" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Contact Person"
+                    @bind-Value="@SelectedContact.Kontak" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat"
+                    @bind-Value="@SelectedContact.Alamat" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat Lain"
+                    @bind-Value="@SelectedContact.AlamatLain" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No Telp"
+                    @bind-Value="@SelectedContact.Telpno" Lines="5" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No HP"
+                    @bind-Value="@SelectedContact.Hpno" Lines="5" />
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Fax"
+                    @bind-Value="@SelectedContact.Faxno" />
             </MudForm>
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
@@ -47,10 +56,15 @@
     private bool _isValidFormData;
     private string[] _errors = { };
     private MudForm? _contactForm;
-    private async Task HandleDrawerOpenChange(bool isOpen)
+
+    protected override void OnInitialized()
     {
-        IsOpen = isOpen;
-        await IsOpenChanged.InvokeAsync(isOpen);
+        Console.WriteLine(SelectedContact.Telpno);
+    }
+    private async Task HandleDrawerCloseButton()
+    {
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(false);
     }
     private async Task HandleEditButtonClick()
     {
@@ -61,14 +75,10 @@
             if (!_isValidFormData) return;
             await ContactService.UpdateContactAsync(SelectedContact);
             Snackbar.Add("Contact edited successfully!", Severity.Success);
-            await OnContactEdit.InvokeAsync(null);
-            IsOpen = false;
+            SelectedContact = new Contact();
+            await OnContactEdit.InvokeAsync();
+            await HandleDrawerCloseButton();
         }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            Snackbar.Add($"Unhandled DB concurrency exception: {ex.Message}", Severity.Error);
-        }
-
         catch (Exception ex)
         {
             Snackbar.Add($"Unhandled error: {ex.Message}", Severity.Error);
@@ -89,6 +99,9 @@
         {
             if (!_isValidFormData) return;
             await ContactService.DeleteContactAsync(SelectedContact);
+            Snackbar.Add("Contact deleted successfully!", Severity.Success);
+            await OnContactEdit.InvokeAsync();
+            await HandleDrawerCloseButton();
         }
         catch (Exception ex)
         {
@@ -102,22 +115,6 @@
 {
 { x => x.ContentText, "Do you really want to delete these records? This process cannot be undone." },
 { x => x.ButtonText, "Delete" },
-{ x => x.Color, Color.Error }
-};
-
-        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        var dialog = DialogService.Show<Dialog>("Delete", parameters, options);
-        var result = await dialog.Result;
-
-        return result;
-    }
-
-    private async Task<DialogResult> ShowOverrideConccurencyUpdate()
-    {
-        var parameters = new DialogParameters<Dialog>
-{
-{ x => x.ContentText, "There was a change since data was previously updated (Someone have change the data you are currently updating since you you started editing). If you choose override, their changes will be overriden with current edit and their edit will be lost!" },
-{ x => x.ButtonText, "Override" },
 { x => x.Color, Color.Error }
 };
 

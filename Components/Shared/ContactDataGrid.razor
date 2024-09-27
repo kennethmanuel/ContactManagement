@@ -12,7 +12,8 @@
         <ToolBarContent>
             <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                 AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => HandleAddContactDrawerButton())">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                OnClick="@(() => HandleAddContactDrawerButton(true))">
                 Add New Contact
             </MudButton>
         </ToolBarContent>
@@ -51,22 +52,18 @@
     {
         contacts = await ContactService.GetContactsAsync();
     }
-    private void HandleAddContactDrawerButton()
+    private void HandleAddContactDrawerButton(bool isOpen)
     {
-        _addContactDrawerIsOpen = !_addContactDrawerIsOpen;
+        _addContactDrawerIsOpen = isOpen;
     }
-
-    private void HandleEditContactDrawerButton()
+    private void HandleEditContactDrawerButton(bool isOpen)
     {
-        if (!_editContactDrawerIsOpen)
-        {
-            _editContactDrawerIsOpen = true;
-        }
+        _editContactDrawerIsOpen = isOpen;
     }
     private void HandleOnRowClick(DataGridRowClickEventArgs<Contact> args)
     {
         selectedContact = args.Item;
-        HandleEditContactDrawerButton();
+        _editContactDrawerIsOpen = true;
     }
     private Func<Contact, bool> _quickFilter => x =>
     {

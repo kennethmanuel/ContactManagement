@@ -16,17 +16,15 @@ services:
       - mariadb_data:/var/lib/mysql
 
   blazorapp:
-    image: mcr.microsoft.com/dotnet/aspnet:8.0
-    container_name: blazorapp
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
-    depends_on:
-      - mariadb
+      - "8080:5000" # Map host port 8080 to container port 80
+    volumes:
+      - ./:/app # Mount the current directory to /app in the container
     environment:
-      ConnectionStrings__DefaultConnection: "Server=mariadb;Database=intranet_home;User Id=chad;Password=gigachad;"
+      - ASPNETCORE_ENVIRONMENT=Development
 
 volumes:
   mariadb_data:

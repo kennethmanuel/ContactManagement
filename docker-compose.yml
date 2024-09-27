@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: superman
+      MYSQL_DATABASE: intranet_home
+      MYSQL_USER: chad
+      MYSQL_PASSWORD: gigachad
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  blazorapp:
+    image: mcr.microsoft.com/dotnet/aspnet:8.0
+    container_name: blazorapp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mariadb
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=mariadb;Database=intranet_home;User Id=chad;Password=gigachad;"
+
+volumes:
+  mariadb_data:

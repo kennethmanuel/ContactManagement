@@ -23,10 +23,6 @@ builder.Services.AddDbContextFactory<IntranetHomeContext>(
     opt => opt.UseMySql(CONNECTION_STRING, serverVersion)
 );
 
-// builder.Services.AddDbContext<IntranetHomeContext>(
-//     options => options.UseMySql(CONNECTION_STRING, serverVersion)
-// );
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

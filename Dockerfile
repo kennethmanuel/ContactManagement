@@ -6,10 +6,14 @@ EXPOSE 80
 # Use the official .NET SDK image for building the app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["ContactManagement/ContactManagement.csproj", "ContactManagement/"]
-RUN dotnet restore "ContactManagement/ContactManagement.csproj"
+
+# Copy the project file and restore dependencies
+COPY ["ContactManagement.csproj", "."]
+RUN dotnet restore
+
+# Copy the entire project and build
 COPY . .
-WORKDIR "/src/ContactManagement"
+WORKDIR "/src"  
 RUN dotnet build "ContactManagement.csproj" -c Release -o /app/build
 
 FROM build AS publish

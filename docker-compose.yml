@@ -12,3 +12,39 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     command: "dotnet watch run --urls=http://0.0.0.0:80"
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: intranet_home
+      MARIADB_USER: kenneth
+      MARIADB_PASSWORD: kenneth
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: kenneth
+      PMA_PASSWORD: kenneth
+    ports:
+      - "8080:80"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+volumes:
+  db_data:

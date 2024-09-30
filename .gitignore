@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 
 db_dump/
 docker-entrypoint-initdb.d/
+.vscode

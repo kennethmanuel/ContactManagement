@@ -1,21 +1,7 @@
 services:
-  blazorapp:
-    image: blazorapp:dev
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "5000:80"
-    volumes:
-      - .:/src  # Mount the project directory
-      - /app/bin  # Persist the compiled output
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-    command: "dotnet watch run --urls=http://0.0.0.0:80"
-
   mariadb:
     image: mariadb:latest
-    container_name: mariadb
+    container_name: contactmanager_mariadb_dev_prealpha
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: root
@@ -24,27 +10,35 @@ services:
       MARIADB_PASSWORD: kenneth
     volumes:
       - db_data:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-  
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
+    container_name: contactmanager_phpmyadmin_dev_prealpha
     restart: always
     environment:
       PMA_HOST: mariadb
-      PMA_USER: kenneth
-      PMA_PASSWORD: kenneth
+      PMA_USER: root
+      PMA_PASSWORD: root
     ports:
       - "8080:80"
     depends_on:
-      mariadb:
-        condition: service_healthy
+      - mariadb
+
+  blazorapp:
+    image: blazorapp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: contactmanager_blazor_dev_prealpha
+    depends_on:
+      - mariadb
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000:8080"
 
 volumes:
   db_data:

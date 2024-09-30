@@ -15,7 +15,6 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<IContactService, ContactService>();
 
-
 string? CONNECTION_STRING = builder.Configuration.GetConnectionString("IntranetHomeContext");
 ServerVersion serverVersion = ServerVersion.AutoDetect(CONNECTION_STRING);
 

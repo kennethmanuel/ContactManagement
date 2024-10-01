@@ -7,6 +7,7 @@
 @inject ISnackbar Snackbar
 @inject IContactService ContactService
 @inject IDialogService DialogService
+@inject IJSRuntime JSRuntime
 
 <MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="true"
     Width="40%">
@@ -51,6 +52,10 @@
             </MudTabPanel>
             <MudTabPanel Text="Export Contact">
                 <MudText>Export Contact</MudText>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" IconColor="Color.Secondary" Size="Size.Large"
+                
+                OnClick="@(()=> HandleSaveContactButtonClick())"
+                >Save</MudButton>
             </MudTabPanel>
         </MudPaper>
     </MudTabs>
@@ -114,6 +119,19 @@
         {
             Snackbar.Add($"Failed to delete contact: {ex.Message}", Severity.Error);
         }
+    }
+    
+    private async Task HandleSaveContactButtonClick()
+    {
+        // Generate the vCard as a byte array
+        byte[] vCardBytes = VCardService.GenerateVCardBasedOnContact();
+
+        // Convert the byte array to Base64 string
+        var base64String = Convert.ToBase64String(vCardBytes);
+        var url = $"data:text/vcard;base64,{base64String}";
+
+        // Use JavaScript to trigger the download
+        await JSRuntime.InvokeVoidAsync("open", url, "_blank");
     }
 
     private async Task<DialogResult> ShowDeleteDialog()

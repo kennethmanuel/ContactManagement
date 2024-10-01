@@ -8,7 +8,7 @@
 
 <div>
     <MudDataGrid T="Contact" Items="@contacts" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="_quickFilter"
-        Hover="true" RowClick="HandleOnRowClick">
+        Hover="true" RowClick="HandleOnRowClick" Dense="true" Striped="true" Bordered="true">
         <ToolBarContent>
             <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                 AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>

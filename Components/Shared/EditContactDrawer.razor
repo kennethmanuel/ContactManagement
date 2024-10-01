@@ -10,7 +10,7 @@
 
 <MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
     Width="45%">
-    <MudItem>
+    <MudItem Class="d-flex flex-row-reverse">
         <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close"
             OnClick="() => HandleDrawerCloseButton()" />
     </MudItem>
@@ -63,7 +63,6 @@
     private async Task HandleDrawerCloseButton()
     {
         IsOpen = false;
-        Console.WriteLine(SelectedContact.Telpno);
         await IsOpenChanged.InvokeAsync(false);
     }
     private async Task HandleEditButtonClick()

@@ -6,7 +6,7 @@
 @inject IntranetHomeContext dbcontext
 @inject IContactService ContactService
 
-<div>
+<MudPaper>
     <MudDataGrid T="Contact" Items="@contacts" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="_quickFilter"
         Hover="true" RowClick="HandleOnRowClick" Dense="true" Striped="true" Bordered="true">
         <ToolBarContent>
@@ -30,13 +30,12 @@
         <PagerContent>
             <MudDataGridPager T="Contact" />
         </PagerContent>
-
     </MudDataGrid>
 
     <AddContactDrawer @bind-IsOpen="_addContactDrawerIsOpen" OnContactAdd="LoadContacts" />
     <EditContactDrawer @bind-IsOpen="_editContactDrawerIsOpen" SelectedContact="selectedContact"
         OnContactEdit="LoadContacts" />
-</div>
+</MudPaper>
 
 @code {
     private string? searchString;

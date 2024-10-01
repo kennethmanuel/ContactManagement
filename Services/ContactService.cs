@@ -41,7 +41,6 @@ public class ContactService : IContactService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.GetType());
             throw new ApplicationException($"Unresolved application problem when updating contact to database: {ex.Message}", ex);
         }
     }

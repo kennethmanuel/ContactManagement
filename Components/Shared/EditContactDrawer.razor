@@ -8,44 +8,52 @@
 @inject IContactService ContactService
 @inject IDialogService DialogService
 
-<MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
-    Width="45%">
+<MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="true"
+    Width="40%">
     <MudItem Class="d-flex flex-row-reverse">
         <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close"
             OnClick="() => HandleDrawerCloseButton()" />
     </MudItem>
-    <MudItem>
-        <MudPaper Class="pa-4">
-            <MudForm @ref="_contactForm" @bind-IsValid="@_isValidFormData" @bind-Errors="@_errors">
-                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Nama"
-                    @bind-Value="@SelectedContact.Nama" />
-                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Deskripsi"
-                    @bind-Value="@SelectedContact.Deskripsi" />
-                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Deskripsi Lain"
-                    @bind-Value="@SelectedContact.MultiDeskripsi" />
-                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Contact Person"
-                    @bind-Value="@SelectedContact.Kontak" />
-                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat"
-                    @bind-Value="@SelectedContact.Alamat" />
-                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat Lain"
-                    @bind-Value="@SelectedContact.AlamatLain" />
-                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No Telp"
-                    @bind-Value="@SelectedContact.Telpno" Lines="5" />
-                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No HP"
-                    @bind-Value="@SelectedContact.Hpno" Lines="5" />
-                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Fax"
-                    @bind-Value="@SelectedContact.Faxno" />
-            </MudForm>
+    <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true" ApplyEffectsToContainer="true"
+        PanelClass="pa-3">
+        <MudPaper MaxHeight="500px" Class="overflow-auto">
+            <MudTabPanel Text="Edit Contact Data">
+                <MudPaper>
+                    <MudForm @ref="_contactForm" @bind-IsValid="@_isValidFormData" @bind-Errors="@_errors">
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Nama"
+                            @bind-Value="@SelectedContact.Nama" />
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Deskripsi"
+                            @bind-Value="@SelectedContact.Deskripsi" />
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Deskripsi Lain"
+                            @bind-Value="@SelectedContact.MultiDeskripsi" />
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Contact Person"
+                            @bind-Value="@SelectedContact.Kontak" />
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat"
+                            @bind-Value="@SelectedContact.Alamat" />
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat Lain"
+                            @bind-Value="@SelectedContact.AlamatLain" />
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No Telp"
+                            @bind-Value="@SelectedContact.Telpno" Lines="5" />
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No HP"
+                            @bind-Value="@SelectedContact.Hpno" Lines="5" />
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Fax"
+                            @bind-Value="@SelectedContact.Faxno" />
+                    </MudForm>
+                    <MudPaper Class="pa-4 mt-4">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
+                            OnClick="@(()=> HandleEditButtonClick())">
+                            Save</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false"
+                            OnClick="@(()=> HandleDeleteButtonClick())">
+                            Delete</MudButton>
+                    </MudPaper>
+                </MudPaper>
+            </MudTabPanel>
+            <MudTabPanel Text="Export Contact">
+                <MudText>Export Contact</MudText>
+            </MudTabPanel>
         </MudPaper>
-        <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
-                OnClick="@(()=> HandleEditButtonClick())">
-                Save</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false"
-                OnClick="@(()=> HandleDeleteButtonClick())">
-                Delete</MudButton>
-        </MudPaper>
-    </MudItem>
+    </MudTabs>
 </MudDrawer>
 
 @code {

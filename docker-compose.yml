@@ -39,6 +39,8 @@ services:
       - "5000:5000"
     volumes:
       - .:/src
+      - /src/bin
+      - /src/obj
     tty: true
     stdin_open: true
 

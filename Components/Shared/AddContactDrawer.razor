@@ -6,7 +6,7 @@
 @inject ISnackbar Snackbar
 @inject IContactService ContactService
 
-<MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="false"
+<MudDrawer @bind-Open="@IsOpen" Anchor=Anchor.End Variant="@DrawerVariant.Temporary" OverlayAutoClose="true"
     Width="40%">
     <MudItem Class="d-flex flex-row-reverse">
         <MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="close"

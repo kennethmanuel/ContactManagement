@@ -8,13 +8,13 @@
 
 <MudPaper>
     <MudDataGrid T="Contact" Items="@contacts" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="_quickFilter"
-        Hover="true" RowClick="HandleOnRowClick" Dense="true" Striped="true" Bordered="true">
+        Hover="true" RowClick="OpenEditContactDrawer" Dense="true" Striped="true" Bordered="true">
         <ToolBarContent>
             <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                OnClick="@(() => HandleAddContactDrawerButton(true))">
-                Add New Contact
+                AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mr-4"></MudTextField>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenAddContactDrawer())"
+                StartIcon="@Icons.Material.Filled.Add">
+                New Contact
             </MudButton>
         </ToolBarContent>
         <Columns>
@@ -51,21 +51,25 @@
     {
         contacts = await ContactService.GetContactsAsync();
     }
-    private void HandleAddContactDrawerButton(bool isOpen)
+    private void OpenAddContactDrawer()
     {
-        _addContactDrawerIsOpen = isOpen;
+        _editContactDrawerIsOpen = false;
+        _addContactDrawerIsOpen = true;
     }
-    private void HandleEditContactDrawerButton(bool isOpen)
+    private void HandleEditContactDrawerButton()
     {
-        _editContactDrawerIsOpen = isOpen;
-    }
-    private void HandleOnRowClick(DataGridRowClickEventArgs<Contact> args)
-    {
-        selectedContact = args.Item;
+        _addContactDrawerIsOpen = false;
         _editContactDrawerIsOpen = true;
+    }
+    private void OpenEditContactDrawer(DataGridRowClickEventArgs<Contact> args)
+    {
+        HandleEditContactDrawerButton();
+        selectedContact = args.Item;
     }
     private Func<Contact, bool> _quickFilter => x =>
     {
+        _editContactDrawerIsOpen = false;
+        _addContactDrawerIsOpen = false;
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
 

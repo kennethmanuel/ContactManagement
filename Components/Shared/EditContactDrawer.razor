@@ -17,11 +17,12 @@
     </MudItem>
     <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true" ApplyEffectsToContainer="true"
         PanelClass="pa-3">
-        <MudPaper MaxHeight="500px" Class="overflow-auto">
+        <MudPaper>
             <MudTabPanel Text="Edit Contact Data">
-                <MudPaper>
-                    <MudForm @ref="_contactForm" @bind-IsValid="@_isValidFormData" @bind-Errors="@_errors">
-                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Nama"
+                <MudPaper MaxHeight="80%" Style="overflow: auto;">
+                    <MudForm @ref="_contactForm" @bind-IsValid="@_isValidFormData" @bind-Errors="@_errors"
+                        Style="overflow: auto">
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" jabel="Nama"
                             @bind-Value="@SelectedContact.Nama" />
                         <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Deskripsi"
                             @bind-Value="@SelectedContact.Deskripsi" />
@@ -30,32 +31,30 @@
                         <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Contact Person"
                             @bind-Value="@SelectedContact.Kontak" />
                         <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat"
-                            @bind-Value="@SelectedContact.Alamat" />
+                            @bind-Value="@SelectedContact.Alamat" AutoGrow />
                         <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Alamat Lain"
-                            @bind-Value="@SelectedContact.AlamatLain" />
+                            @bind-Value="@SelectedContact.AlamatLain" AutoGrow />
                         <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No Telp"
-                            @bind-Value="@SelectedContact.Telpno" Lines="5" />
+                            @bind-Value="@SelectedContact.Telpno" AutoGrow />
                         <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="No HP"
-                            @bind-Value="@SelectedContact.Hpno" Lines="5" />
+                            @bind-Value="@SelectedContact.Hpno" AutoGrow />
                         <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Fax"
-                            @bind-Value="@SelectedContact.Faxno" />
+                            @bind-Value="@SelectedContact.Faxno" AutoGrow />
                     </MudForm>
-                    <MudPaper Class="pa-4 mt-4">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
-                            OnClick="@(()=> HandleEditButtonClick())">
-                            Save</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false"
-                            OnClick="@(()=> HandleDeleteButtonClick())">
-                            Delete</MudButton>
-                    </MudPaper>
+                </MudPaper>
+                <MudPaper Class="pa-4 mt-4 fixed">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false"
+                        OnClick="@(()=> HandleEditButtonClick())">
+                        Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false"
+                        OnClick="@(()=> HandleDeleteButtonClick())">
+                        Delete</MudButton>
                 </MudPaper>
             </MudTabPanel>
             <MudTabPanel Text="Export Contact">
                 <MudText>Export Contact</MudText>
-                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" IconColor="Color.Secondary" Size="Size.Large"
-                
-                OnClick="@(()=> HandleSaveContactButtonClick())"
-                >Save</MudButton>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" IconColor="Color.Secondary"
+                    Size="Size.Large" OnClick="@(()=> HandleSaveContactButtonClick())">Save</MudButton>
             </MudTabPanel>
         </MudPaper>
     </MudTabs>
@@ -120,7 +119,7 @@
             Snackbar.Add($"Failed to delete contact: {ex.Message}", Severity.Error);
         }
     }
-    
+
     private async Task HandleSaveContactButtonClick()
     {
         // Generate the vCard as a byte array
